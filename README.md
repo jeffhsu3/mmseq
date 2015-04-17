@@ -67,7 +67,7 @@ or using STAR aligner
     --genomeChrBinNbits 13 --sjdbOverhang 0
 
 The value of genomeChrBinNbits is dependent on the number of transcripts and
-the memory of the machine.  The bigger the number th lower it should be (see STAR manual).
+the memory of the machine.  The bigger the number the lower it should be (see STAR manual).
 
 #### Step 2a: Trim out adapter sequences if necessary
 If the insert size distribution overlaps the read length, trim back the reads to exclude adapter sequences. [Trim Galore!](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/) works well. E.g. for libraries prepared using standard Illumina adapters (`AGATCGGAAGAGC`), run:
@@ -79,7 +79,7 @@ If the insert size distribution overlaps the read length, trim back the reads to
     bowtie -a --best --strata -S -m 100 -X 500 --chunkmbs 256 -p 8 Homo_sapiens.GRCh37.70.ref_transcripts \
       -1 <(gzip -dc asample_1.fq.gz) -2 <(gzip -dc asample_2.fq.gz) | samtools view -F 0xC -bS - | \
       samtools sort -n - asample.namesorted
-
+---
     STAR --genomeDir /path/to/GenomeDir \
     --readFilesIn asample_R1_L001.fq.gz,asample_R2_L002.fq.gz asample_R2_L001.fq.gz,asample_R2_L002.fq.gz \
     --readFilesCommand zcat --outFilterMultimapNmax 100 --outFileNamePrefix asample
