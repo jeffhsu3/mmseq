@@ -55,9 +55,14 @@ The current release is 1.0.8 ([changelog](https://github.com/eturro/mmseq/tree/m
 
 The example commands below assume that the FASTQ files are `asample_1.fq` and `asample_2.fq` (paired-end) and the FASTA file is `Homo_sapiens.GRCh37.70.ref_transcripts.fa`.
 
-#### Step 1: Index the reference transcript sequences with Bowtie 1 (not Bowtie 2)
+#### Step 1: Index the reference transcript sequences with Bowtie 1 (not Bowtie
+2) or using STAR aligner
 
     bowtie-build --offrate 3 Homo_sapiens.GRCh37.70.ref_transcripts.fa Homo_sapiens.GRCh37.70.ref_transcripts 
+
+    STAR --runMode genomeGenerate --genomeDir /path/to/GenomeDir
+    --genomeFastaFiles Homo_sapiens.GRCh37.70.ref_transcripts.fa
+    --genomeChrBinNbits 13 --sjdbOverhang 0
 
 (It is advisable to use a lower-than-default value for --offrate (such as 2 or 3) as long as the resulting index fits in memory.)
 
@@ -72,8 +77,15 @@ If the insert size distribution overlaps the read length, trim back the reads to
       -1 <(gzip -dc asample_1.fq.gz) -2 <(gzip -dc asample_2.fq.gz) | samtools view -F 0xC -bS - | \
       samtools sort -n - asample.namesorted
 
+    STAR --genomeDir /path/to/GenomeDir \
+    --readFilesIn asample_R1_L001.fq.gz,asample_R2_L002.fq.gz asample_R2_L001.fq.gz,asample_R2_L002.fq.gz \
+    --readFilesCommand zcat --outFilterMultimapNmax 100 --outFileNamePrefix asample
+
+    samtools view -F 0xC -bS asample.bam | samtools sort -n - asample.namesorted
+
 - Always specify `-a` to ensure you get multi-mapping alignments
-- Suppress alignments for reads that map to a huge number of transcripts with the `-m` option (e.g. `-m 100`)
+- Suppress alignments for reads that map to a huge number of transcripts with
+  the `-m` option (e.g. `-m 100`) in bowtie or --outFilterMultimapNmax 100
 - Adjust `-X` according to the maximum insert size
 - Specify `--norc` if the data were generated following a forward-stranded protocol
 - If the reference FASTA file doesn't use the [Ensembl convention](#fastas-with-other-header-conventions), then also specify `--fullref`
