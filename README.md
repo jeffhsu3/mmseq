@@ -55,16 +55,19 @@ The current release is 1.0.8 ([changelog](https://github.com/eturro/mmseq/tree/m
 
 The example commands below assume that the FASTQ files are `asample_1.fq` and `asample_2.fq` (paired-end) and the FASTA file is `Homo_sapiens.GRCh37.70.ref_transcripts.fa`.
 
-#### Step 1: Index the reference transcript sequences with Bowtie 1 (not Bowtie
-2) or using STAR aligner
+#### Step 1: Index the reference transcript sequences with Bowtie 1 (not Bowtie2)\
+or using STAR aligner
 
     bowtie-build --offrate 3 Homo_sapiens.GRCh37.70.ref_transcripts.fa Homo_sapiens.GRCh37.70.ref_transcripts 
+
+(It is advisable to use a lower-than-default value for --offrate (such as 2 or 3) as long as the resulting index fits in memory.)
 
     STAR --runMode genomeGenerate --genomeDir /path/to/GenomeDir
     --genomeFastaFiles Homo_sapiens.GRCh37.70.ref_transcripts.fa
     --genomeChrBinNbits 13 --sjdbOverhang 0
 
-(It is advisable to use a lower-than-default value for --offrate (such as 2 or 3) as long as the resulting index fits in memory.)
+The value of genomeChrBinNbits is dependent on the number of transcripts and
+the memory of the machine.  The bigger the number th lower it should be (see STAR manual).
 
 #### Step 2a: Trim out adapter sequences if necessary
 If the insert size distribution overlaps the read length, trim back the reads to exclude adapter sequences. [Trim Galore!](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/) works well. E.g. for libraries prepared using standard Illumina adapters (`AGATCGGAAGAGC`), run:
