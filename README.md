@@ -74,7 +74,7 @@ If the insert size distribution overlaps the read length, trim back the reads to
 
     trim_galore -q 15 --stringency 3 -e 0.05 --length 36 --trim1 --paired asample_1.fq.gz asample_2.fq.gz
 
-#### Step 2b: Align reads with Bowtie 1 (not Bowtie 2)
+#### Step 2b: Align reads with Bowtie 1 (not Bowtie 2) or STAR aligner.
 
     bowtie -a --best --strata -S -m 100 -X 500 --chunkmbs 256 -p 8 Homo_sapiens.GRCh37.70.ref_transcripts \
       -1 <(gzip -dc asample_1.fq.gz) -2 <(gzip -dc asample_2.fq.gz) | samtools view -F 0xC -bS - | \
